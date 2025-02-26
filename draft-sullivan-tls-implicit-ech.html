@@ -21,20 +21,21 @@ application profile or being externally configured.
          
          
            They  MAY  use another value than ECHConfig.contents.public_name
-in the "server_name" extension (rather than they  SHOULD ) 
+in the "server_name" extension (rather than they  SHOULD  use it) 
          
        
-       Servers that include  implicit_ech  in the ECHConfig  MUST  accommodate
+       Client-facing servers that include  implicit_ech  in the ECHConfig  MUST  accommodate
 flexible  config_id  usage as defined in Section 10.4. of  .
 This approach enables the removal of stable identifiers (fixed config ID and
 known public_name) that on-path adversaries can use to fingerprint a
-connection. This improves upon the "Do Not Stick Out" design goal
+connection. 
+       This improves upon the "Do Not Stick Out" design goal
 from Section 10.10.4 of   by allowing clients to choose
 unpredictable identifiers on the wire in the scenario where the set of
 ECH configurations the client encounters is small and therefore
 popular  public_name  or  config_id  values "stick out". 
        Note that this increases CPU usage in multi-key deployments because
-servers must perform uniform trial decryption to handle arbitrary
+client-facing servers must perform uniform trial decryption to handle arbitrary
  config_id  values. 
     ' name="description">
 <meta content="xml2rfc 3.27.0" name="generator">
@@ -1124,21 +1125,22 @@ application profile or being externally configured.<a href="#section-abstract-2.
 </li>
         <li class="normal" id="section-abstract-2.3">
           <p id="section-abstract-2.3.1">They <span class="bcp14">MAY</span> use another value than ECHConfig.contents.public_name
-in the "server_name" extension (rather than they <span class="bcp14">SHOULD</span>)<a href="#section-abstract-2.3.1" class="pilcrow">¶</a></p>
+in the "server_name" extension (rather than they <span class="bcp14">SHOULD</span> use it)<a href="#section-abstract-2.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-abstract-3">Servers that include <code>implicit_ech</code> in the ECHConfig <span class="bcp14">MUST</span> accommodate
+<p id="section-abstract-3">Client-facing servers that include <code>implicit_ech</code> in the ECHConfig <span class="bcp14">MUST</span> accommodate
 flexible <code>config_id</code> usage as defined in Section 10.4. of <span>[<a href="#ECH-DRAFT" class="cite xref">ECH-DRAFT</a>]</span>.
 This approach enables the removal of stable identifiers (fixed config ID and
 known public_name) that on-path adversaries can use to fingerprint a
-connection. This improves upon the "Do Not Stick Out" design goal
+connection.<a href="#section-abstract-3" class="pilcrow">¶</a></p>
+<p id="section-abstract-4">This improves upon the "Do Not Stick Out" design goal
 from Section 10.10.4 of <span>[<a href="#ECH-DRAFT" class="cite xref">ECH-DRAFT</a>]</span> by allowing clients to choose
 unpredictable identifiers on the wire in the scenario where the set of
 ECH configurations the client encounters is small and therefore
-popular <code>public_name</code> or <code>config_id</code> values "stick out".<a href="#section-abstract-3" class="pilcrow">¶</a></p>
-<p id="section-abstract-4">Note that this increases CPU usage in multi-key deployments because
-servers must perform uniform trial decryption to handle arbitrary
-<code>config_id</code> values.<a href="#section-abstract-4" class="pilcrow">¶</a></p>
+popular <code>public_name</code> or <code>config_id</code> values "stick out".<a href="#section-abstract-4" class="pilcrow">¶</a></p>
+<p id="section-abstract-5">Note that this increases CPU usage in multi-key deployments because
+client-facing servers must perform uniform trial decryption to handle arbitrary
+<code>config_id</code> values.<a href="#section-abstract-5" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1252,9 +1254,8 @@ servers must perform uniform trial decryption to handle arbitrary
 <p id="section-1-1">The Encrypted ClientHello (ECH) protocol <span>[<a href="#ECH-DRAFT" class="cite xref">ECH-DRAFT</a>]</span> is designed to hide
 sensitive TLS handshake parameters, including the real SNI, from passive
 observers. In the base ECH model, the client sets its outer SNI to
-the public_name from the ECHConfig and derives config_id by hashing the
-server’s HPKE public key. Both of these can become stable fingerprints that
-on-path adversaries recognize.<a href="#section-1-1" class="pilcrow">¶</a></p>
+the public_name and config_id from the ECHConfig. Both of these can
+become stable fingerprints that on-path adversaries recognize.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">In implicit mode, the client <span class="bcp14">MAY</span>:<a href="#section-1-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-1-3">
 <li id="section-1-3.1">
@@ -1262,16 +1263,16 @@ on-path adversaries recognize.<a href="#section-1-1" class="pilcrow">¶</a></p>
 </li>
         <li id="section-1-3.2">
           <p id="section-1-3.2.1">Select any config_id instead of taking it from the ECH configuration
-without an application profile.<a href="#section-1-3.2.1" class="pilcrow">¶</a></p>
+(without an application profile or extenal configuration agreement).<a href="#section-1-3.2.1" class="pilcrow">¶</a></p>
 </li>
       </ol>
-<p id="section-1-4">Servers that publish or accept implicit ECH configurations must adjust key
-selection (e.g., single-key usage, uniform trial decryption), removing reliance
-on stable config IDs or well-known <code>public_name</code> values. This design helps
-conceal ECH usage from on-path adversaries, though deployments may see
-increased CPU usage.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-4">Client-facing servers that publish or accept implicit ECH configurations
+must adjust key selection (e.g., single-key usage,
+uniform trial decryption), removing reliance on stable config IDs or
+well-known <code>public_name</code> values. This design helps conceal ECH usage
+from on-path adversaries, though deployments may see increased CPU usage.<a href="#section-1-4" class="pilcrow">¶</a></p>
 <p id="section-1-5">This proposal also addresses a timing side-channel in GREASE vs. real ECH, 
-by requiring servers supporting implicit ECH always to perform trial
+by requiring client-facing servers supporting implicit ECH always to perform trial
 decryption as defined in Section 10.4. of <span>[<a href="#ECH-DRAFT" class="cite xref">ECH-DRAFT</a>]</span> — ensuring consistent
 behavior regardless of ECH key validity.<a href="#section-1-5" class="pilcrow">¶</a></p>
 </section>
@@ -1298,8 +1299,8 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-extension-definition-and-se" class="section-name selfRef">Extension Definition and Semantics</a>
         </h3>
 <p id="section-3.1-1">A new ECHConfig extension type is defined to indicate implicit mode. If this
-extension is present in ECHConfigContents.extensions, clients and servers
-follow the rules described here, overriding certain parts of the base ECH
+extension is present in ECHConfigContents.extensions, clients and client-facing
+servers follow the rules described here, overriding certain parts of the base ECH
 specification.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
 <p id="section-3.1-2">The extension has the following format:<a href="#section-3.1-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-3.1-3">
@@ -1310,9 +1311,8 @@ specification.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
 </pre><a href="#section-3.1-3" class="pilcrow">¶</a>
 </div>
 <p id="section-3.1-4">The extension_data is zero-length. The presence of this extension in the
-ECHConfig signals that the config_id used by the client may be ephemeral,
-outer SNI need not match public_name, and retry hint verification uses
-public_name coverage rather than SNI matching.<a href="#section-3.1-4" class="pilcrow">¶</a></p>
+ECHConfig signals to the client that the client-facing server is configured
+for implicit ECH and follows the requirements of this document.<a href="#section-3.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="overridden-rules-in-the-base-ech-specification">
@@ -1333,15 +1333,11 @@ the config_id.<a href="#section-3.2-2.1.1" class="pilcrow">¶</a></p>
 value of the "server_name" extension to ECHConfig.contents.public_name. In
 implicit mode, the client <span class="bcp14">MAY</span> choose any valid domain name for the outer SNI.<a href="#section-3.2-2.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-3.2-2.3">
-            <p id="section-3.2-2.3.1">They <span class="bcp14">MAY</span> use another value than ECHConfig.contents.public_name
-in the "server_name" extension.<a href="#section-3.2-2.3.1" class="pilcrow">¶</a></p>
-</li>
         </ul>
 <p id="section-3.2-3">Note that the validation rules in Section 6.1.7 of <span>[<a href="#ECH-DRAFT" class="cite xref">ECH-DRAFT</a>]</span> still apply
 and the client is still expected to validate that the certificate
 is valid for ECHConfig.contents.public_name (not the "server_name" chosen by
-the client) when the server rejects ECH.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
+the client) when the client-facing server rejects ECH.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1361,16 +1357,13 @@ ignoring public_name.<a href="#section-4-2.1.1" class="pilcrow">¶</a></p>
           <p id="section-4-2.2.1">It <span class="bcp14">MAY</span> produce a random or arbitrary config_id, rather than
 using ECHConfigContents.key_config.config_id<a href="#section-4-2.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-4-2.3">
-          <p id="section-4-2.3.1">If the server issues an ECH retry hint (for example, in EncryptedExtensions),
-the client <span class="bcp14">MUST</span> confirm that the server certificate covers the original
-public_name from the ECHConfig. If coverage is lacking, the client discards
-the hint.<a href="#section-4-2.3.1" class="pilcrow">¶</a></p>
-</li>
       </ul>
 <p id="section-4-3">Other aspects of the base ECH spec remain unchanged. In particular, the client
 still picks a cipher suite from key_config.cipher_suites, produces a valid HPKE
-ephemeral key, and encrypts ClientHelloInner into the payload field.<a href="#section-4-3" class="pilcrow">¶</a></p>
+ephemeral key, and encrypts ClientHelloInner into the payload field. If the
+client-facing server issues an ECH retry hint (for example, in
+EncryptedExtensions), the client <span class="bcp14">MUST</span> still confirm that the server certificate
+is valid for the public_name from the ECHConfig used to establish the connection.<a href="#section-4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="client-facing-server-behavior">
@@ -1393,7 +1386,7 @@ the inner ClientHello and the appropriate certificate chain for the actual
 </li>
         <li id="section-5-3.2">
           <p id="section-5-3.2.1">The client used a different ECHConfig than those currently supported on
-the client-facing server server.<a href="#section-5-3.2.1" class="pilcrow">¶</a></p>
+the client-facing server.<a href="#section-5-3.2.1" class="pilcrow">¶</a></p>
 </li>
       </ol>
 <p id="section-5-4">After trial decryption, ff the server recognizes the outer SNI, has a
