@@ -146,11 +146,12 @@ If the client sees the implicit_ech extension in an ECHConfig:
 
 Other aspects of the base ECH spec remain unchanged. In particular, the client
 still picks a cipher suite from key_config.cipher_suites, produces a valid HPKE
-ephemeral key, and encrypts ClientHelloInner into the payload field. If the
-client-facing server issues an ECH retry hint (for example, in
+ephemeral key, and encrypts ClientHelloInner into the payload field.
+
+If the client-facing server issues an ECH retry hint (for example, in
 EncryptedExtensions), the client MUST still confirm that the server certificate
 is valid for the public_name from the ECHConfig used to establish the connection.
-
+Note that this may be a different name than the one sent in the outer SNI.
 
 # Client-Facing Server Behavior
 
