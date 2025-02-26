@@ -109,13 +109,13 @@ public_name coverage rather than SNI matching.
 ## Overridden Rules in the Base ECH Specification
 
 When the implicit_ech extension is found in ECHConfigContents.extensions, the
-following rules in {{DRAFT-ECH}} are overridden:
+following rules in {{ECH-DRAFT}} are overridden:
 
-• Deterministic config_id derivation (section 4.1 of {{DRAFT-ECH}}). Instead of
+• Deterministic config_id derivation (section 4.1 of {{ECH-DRAFT}}). Instead of
   hashing the HPKE public key, the client MAY generate config_id as random
   or arbitrary bytes.
 
-• Outer SNI usage (sections where {{DRAFT-ECH}} says the client SHOULD set SNI
+• Outer SNI usage (sections where {{ECH-DRAFT}} says the client SHOULD set SNI
   to public_name). In implicit mode, the client MAY choose any valid domain
   name or random string for the outer SNI.
 
