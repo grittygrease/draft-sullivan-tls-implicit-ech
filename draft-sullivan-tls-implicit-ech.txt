@@ -4,9 +4,9 @@
 
 tls                                                          N. Sullivan
 Internet-Draft                               Cryptography Consulting LLC
-Updates: draft-ietf-tls-esni-23 (if approved)           25 February 2025
+Updates: draft-ietf-tls-esni-23 (if approved)           26 February 2025
 Intended status: Standards Track                                        
-Expires: 29 August 2025
+Expires: 30 August 2025
 
 
                  Implicit ECH Configuration for TLS 1.3
@@ -49,7 +49,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 29 August 2025.
+   This Internet-Draft will expire on 30 August 2025.
 
 Copyright Notice
 
@@ -276,6 +276,20 @@ Table of Contents
       config_id usage and flexible outer SNI.
 
 9.  Normative References
+
+   [ECH-DRAFT]
+              Rescorla, E., Oku, K., Sullivan, N., and C. A. Wood, "TLS
+              Encrypted Client Hello", Work in Progress, Internet-Draft,
+              draft-ietf-tls-esni-23, 19 February 2025,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-tls-
+              esni-23>.
+
+   [I-D.draft-ietf-tls-esni-23]
+              Rescorla, E., Oku, K., Sullivan, N., and C. A. Wood, "TLS
+              Encrypted Client Hello", Work in Progress, Internet-Draft,
+              draft-ietf-tls-esni-23, 19 February 2025,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-tls-
+              esni-23>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
