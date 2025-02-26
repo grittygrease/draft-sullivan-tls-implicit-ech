@@ -2,7 +2,7 @@
 
 
 
-tls                                                          N. Sullivan
+Transport Layer Security                                     N. Sullivan
 Internet-Draft                               Cryptography Consulting LLC
 Updates: draft-ietf-tls-esni-23 (if approved)           26 February 2025
 Intended status: Standards Track                                        
@@ -10,7 +10,7 @@ Expires: 30 August 2025
 
 
                  Implicit ECH Configuration for TLS 1.3
-                   draft-sullivan-tls-implicit-ech-00
+                 draft-sullivan-tls-implicit-ech-latest
 
 Abstract
 
@@ -42,6 +42,17 @@ Abstract
    Note that this increases CPU usage in multi-key deployments because
    client-facing servers must perform uniform trial decryption to handle
    arbitrary config_id values.
+
+Discussion Venues
+
+   This note is to be removed before publishing as an RFC.
+
+   Discussion of this document takes place on the Transport Layer
+   Security mailing list (tls@ietf.org), which is archived at
+   https://mailarchive.ietf.org/arch/browse/tls/.
+
+   Source for this draft and an issue tracker can be found at
+   https://github.com/grittygrease/draft-sullivan-tls-implicit-ech.
 
 Status of This Memo
 
@@ -215,7 +226,7 @@ Table of Contents
    2.  The client used a different ECHConfig than those currently
        supported on the client-facing server.
 
-   After trial decryption, ff the server recognizes the outer SNI, has a
+   After trial decryption, if the server recognizes the outer SNI, has a
    certificate that covers it, and supports non-ECH connections for this
    domain, then the server proceeds with a standard TLS handshake based
    on the indicated SNI.  Otherwise, the server MAY send an ECH retry
@@ -225,7 +236,7 @@ Table of Contents
        implicit flag again.
 
    2.  A server certificate that is valid for the public_name in one of
-       the supported ECH configuration, ensuring the client can verify
+       the supported ECH configurations, ensuring the client can verify
        it.
 
    If multiple ECH keys are in rotation, perform uniform trial
