@@ -1365,6 +1365,8 @@ ephemeral key, and encrypts ClientHelloInner into the payload field.<a href="#se
 EncryptedExtensions), the client <span class="bcp14">MUST</span> still confirm that the server certificate
 is valid for the public_name from the ECHConfig used to establish the connection.
 Note that this may be a different name than the one sent in the outer SNI.<a href="#section-4-4" class="pilcrow">¶</a></p>
+<p id="section-4-5">As described in Section 6.1.1 of <span>[<a href="#ECH-DRAFT" class="cite xref">ECH-DRAFT</a>]</span>, in the event of HRR, the config_id 
+<span class="bcp14">MUST</span> be left unchanged for the second ClientHelloOuter.<a href="#section-4-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="client-facing-server-behavior">
@@ -1532,7 +1534,7 @@ usage and flexible outer SNI.<a href="#section-8-2.5.1" class="pilcrow">¶</a></
       <h2 id="name-acknowledgments">
 <a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
       </h2>
-<p id="appendix-A-1">Marwan Fayed provided ideas and contributions to this draft.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<p id="appendix-A-1">Marwan Fayed and Chris Patton provided ideas and contributions to this draft.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authors-addresses">
