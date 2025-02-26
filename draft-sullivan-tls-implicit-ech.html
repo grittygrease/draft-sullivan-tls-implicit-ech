@@ -1271,7 +1271,7 @@ must adjust key selection (e.g., single-key usage,
 uniform trial decryption), removing reliance on stable config IDs or
 well-known <code>public_name</code> values. This design helps conceal ECH usage
 from on-path adversaries, though deployments may see increased CPU usage.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<p id="section-1-5">This proposal also addresses a timing side-channel in GREASE vs. real ECH, 
+<p id="section-1-5">This proposal also addresses a timing side-channel in GREASE vs. real ECH,
 by requiring client-facing servers supporting implicit ECH always to perform trial
 decryption as defined in Section 10.4. of <span>[<a href="#ECH-DRAFT" class="cite xref">ECH-DRAFT</a>]</span> — ensuring consistent
 behavior regardless of ECH key validity.<a href="#section-1-5" class="pilcrow">¶</a></p>
