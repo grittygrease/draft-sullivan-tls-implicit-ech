@@ -120,11 +120,11 @@ for implicit ECH and follows the requirements of this document.
 When the implicit_ech extension is found in ECHConfigContents.extensions, the
 following rules in {{ECH-DRAFT}} are overridden:
 
-* The requirements for choosing the config_id in the ClientHello (Section 6.1.1.
+- The requirements for choosing the config_id in the ClientHello (Section 6.1.1.
   of {{ECH-DRAFT}}). In implicit mode, the client MAY choose any value for
   the config_id.
 
-* Outer SNI usage (Section 6.1 of {{ECH-DRAFT}} says the client SHOULD set the
+- Outer SNI usage (Section 6.1 of {{ECH-DRAFT}} says the client SHOULD set the
   value of the "server_name" extension to ECHConfig.contents.public_name. In
   implicit mode, the client MAY choose any valid domain name for the outer SNI.
 
@@ -138,10 +138,10 @@ the client) when the client-facing server rejects ECH.
 
 If the client sees the implicit_ech extension in an ECHConfig:
 
-* It MAY select any valid DNS name for the "server_name" extension,
+- It MAY select any valid DNS name for the "server_name" extension,
   ignoring public_name.
 
-* It MAY produce a random or arbitrary config_id, rather than
+- It MAY produce a random or arbitrary config_id, rather than
   using ECHConfigContents.key_config.config_id
 
 Other aspects of the base ECH spec remain unchanged. In particular, the client
@@ -153,7 +153,7 @@ EncryptedExtensions), the client MUST still confirm that the server certificate
 is valid for the public_name from the ECHConfig used to establish the connection.
 Note that this may be a different name than the one sent in the outer SNI.
 
-As described in Section 6.1.1 of {{ECH-DRAFT}}, in the event of HRR, the config_id 
+As described in Section 6.1.1 of {{ECH-DRAFT}}, in the event of HRR, the config_id
 MUST be left unchanged for the second ClientHelloOuter.
 
 # Client-Facing Server Behavior
@@ -173,21 +173,21 @@ the inner ClientHello and the appropriate certificate chain for the actual
 2. The client used a different ECHConfig than those currently supported on
    the client-facing server.
 
-After trial decryption, ff the server recognizes the outer SNI, has a
+After trial decryption, if the server recognizes the outer SNI, has a
 certificate that covers it, and supports non-ECH connections for this
 domain, then the server proceeds with a standard TLS handshake based
 on the indicated SNI. Otherwise, the server MAY send an ECH retry hint
 in the `ServerHello`, accompanied by:
 
 1. A newly issued or updated ECHConfig, possibly including the implicit
-   flag again.  
-3. A server certificate that is valid for the public_name in one of the
-   supported ECH configuration, ensuring the client can verify it.  
+   flag again.
+2. A server certificate that is valid for the public_name in one of the
+   supported ECH configurations, ensuring the client can verify it.  
 
 If multiple ECH keys are in rotation, perform uniform trial decryption
-to avoid timing signals that reveal actual vs. unknown config_id usage. The 
+to avoid timing signals that reveal actual vs. unknown config_id usage. The
 server SHOULD attempt ECH decryption first to avoid revealing whether
-the `config_id` was recognized. 
+the `config_id` was recognized.
 
 In this model, trial decryption on every connection ensures that GREASE
 and real ECH connections are handled uniformly, preventing timing
