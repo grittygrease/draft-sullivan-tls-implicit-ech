@@ -36,22 +36,29 @@ informative:
 --- abstract
 
 This document updates the TLS Encrypted ClientHello (ECH) specification
-{{!ECH-DRAFT=I-D.draft-ietf-tls-esni-23}} to support an implicit mode in ECH signaled by a new
-`implicit_ech` extension in `ECHConfigContents`. Clients that detect this
-extension override certain base ECH rules:
+{{!ECH-DRAFT=I-D.draft-ietf-tls-esni-23}} to support an implicit mode in
+ECH signaled by a new `implicit_ech` extension in `ECHConfigContents`.
+Clients that detect this extension override certain base ECH rules:
 
-- They choose any outer SNI instead of `public_name`.
-- They generate `config_id` ephemerally rather than hashing the server’s
-  HPKE key.
-- They validate ECH retry hints by checking that the server certificate
-  covers `public_name`, instead of matching the outer SNI.
+- They MAY choose any outer SNI instead of `public_name`.
+- They MAY choose any value for the `config_id` without an
+  application profile or being externally configured.
+- They MAY use another value than ECHConfig.contents.public_name
+  in the "server_name" extension (rather than they SHOULD)
 
 Servers that include `implicit_ech` in the ECHConfig MUST accommodate
-flexible `config_id` usage. This approach removes stable identifiers (a
-hashed config ID and a known public_name) that can be blocked by censors or
-fingerprinted by middleboxes. It also increases CPU usage in multi-key
-deployments, because servers must perform uniform trial decryption to handle
-ephemeral `config_id` values.
+flexible `config_id` usage as defined in Section 10.4. of {{ECH-DRAFT}}.
+This approach enables the removal of stable identifiers (fixed config ID and
+known public_name) that on-path adversaries can use to fingerprint a
+connection. This improves upon the "Do Not Stick Out" design goal
+from Section 10.10.4 of {{ECH-DRAFT}} by allowing clients to choose
+unpredictable identifiers on the wire in the scenario where the set of
+ECH configurations the client encounters is small and therefore
+popular `public_name` or `config_id` values "stick out".
+
+Note that this increases CPU usage in multi-key deployments because
+servers must perform uniform trial decryption to handle arbitrary
+`config_id` values.
 
 
 --- middle
@@ -63,22 +70,24 @@ sensitive TLS handshake parameters, including the real SNI, from passive
 observers. In the base ECH model, the client sets its outer SNI to
 the public_name from the ECHConfig and derives config_id by hashing the
 server’s HPKE public key. Both of these can become stable fingerprints that
-censors or middleboxes recognize.
+on-path adversaries recognize.
 
-In implicit mode, the client can:
+In implicit mode, the client MAY:
 
 1. Select any outer SNI (rather than the public_name).
-2. Randomize config_id instead of deriving it from the HPKE key.
+2. Select any config_id instead of taking it from the ECH configuration
+   without an application profile.
 
 Servers that publish or accept implicit ECH configurations must adjust key
 selection (e.g., single-key usage, uniform trial decryption), removing reliance
-on stable hashed config IDs or well-known public_name. This design helps
+on stable config IDs or well-known `public_name` values. This design helps
 conceal ECH usage from on-path adversaries, though deployments may see
 increased CPU usage.
 
 This proposal also addresses a timing side-channel in GREASE vs. real ECH, 
-by requiring servers supporting implicit ECH to always attempt decryption
-— ensuring consistent behavior regardless of ECH key validity.
+by requiring servers supporting implicit ECH always to perform trial
+decryption as defined in Section 10.4. of {{ECH-DRAFT}} — ensuring consistent
+behavior regardless of ECH key validity.
 
 # Conventions and Definitions
 
@@ -111,29 +120,34 @@ public_name coverage rather than SNI matching.
 When the implicit_ech extension is found in ECHConfigContents.extensions, the
 following rules in {{ECH-DRAFT}} are overridden:
 
-• Deterministic config_id derivation (section 4.1 of {{ECH-DRAFT}}). Instead of
-  hashing the HPKE public key, the client MAY generate config_id as random
-  or arbitrary bytes.
+* The requirements for choosing the config_id in the ClientHello (Section 6.1.1.
+  of {{ECH-DRAFT}}). In implicit mode, the client MAY choose any value for
+  the config_id.
 
-• Outer SNI usage (sections where {{ECH-DRAFT}} says the client SHOULD set SNI
-  to public_name). In implicit mode, the client MAY choose any valid domain
-  name or random string for the outer SNI.
+* Outer SNI usage (Section 6.1 of {{ECH-DRAFT}} says the client SHOULD set the
+  value of the "server_name" extension to ECHConfig.contents.public_name. In
+  implicit mode, the client MAY choose any valid domain name for the outer SNI.
 
-• Verification of retry hints (sections referencing SNI-based certificate
-  checks). In implicit mode, the client MUST ensure that the server’s
-  certificate covers public_name from the ECHConfig rather than matching
-  the SNI on the wire.
+* They MAY use another value than ECHConfig.contents.public_name
+  in the "server_name" extension.
+
+Note that the validation rules in Section 6.1.7 of {{ECH-DRAFT}} still apply
+and the client is still expected to validate that the certificate
+is valid for ECHConfig.contents.public_name (not the "server_name" chosen by
+the client) when the server rejects ECH.
+
 
 # Client Behavior
 
 If the client sees the implicit_ech extension in an ECHConfig:
 
-• It MAY select any outer SNI, ignoring public_name as the actual SNI string.
+* It MAY select any valid DNS name for the "server_name" extension,
+  ignoring public_name.
 
-• It MAY produce a random or arbitrary config_id, rather than deriving it from
-  the HPKE key.
+* It MAY produce a random or arbitrary config_id, rather than
+  using ECHConfigContents.key_config.config_id
 
-• If the server issues an ECH retry hint (for example, in EncryptedExtensions),
+* If the server issues an ECH retry hint (for example, in EncryptedExtensions),
   the client MUST confirm that the server certificate covers the original
   public_name from the ECHConfig. If coverage is lacking, the client discards
   the hint.
@@ -142,31 +156,33 @@ Other aspects of the base ECH spec remain unchanged. In particular, the client
 still picks a cipher suite from key_config.cipher_suites, produces a valid HPKE
 ephemeral key, and encrypts ClientHelloInner into the payload field.
 
-# Server Behavior
+# Client-Facing Server Behavior
 
-A server that supports Implicit ECH on an IP address shared with non-ECH
-services or GREASE ECH clients MUST attempt to decrypt the encrypted ClientHello
-for every incoming connection that presents an ECH extension. This requirement
-applies even if the `config_id` is not recognized, so GREASE and valid ECH
-connections appear indistinguishable from a timing perspective.
+A client-facing server that supports Implicit ECH on an IP address shared
+with non-ECH services or GREASE ECH clients MUST attempt to decrypt the
+encrypted ClientHello for every incoming connection that presents an ECH
+extension. This requirement applies even if the `config_id` is not
+recognized, so GREASE and valid ECH connections appear indistinguishable
+from a timing perspective.
 
 If the decryption attempt succeeds, the server proceeds with the handshake using
 the inner ClientHello and the appropriate certificate chain for the actual
 (inner) SNI. If the decryption attempt fails, there are two possibilities:
 
 1. The client was connecting to a domain that does not support ECH
-2. The client used a different ECHConfig from the currently supported one on
-   the server. 
+2. The client used a different ECHConfig than those currently supported on
+   the client-facing server server.
 
-If the server recognizes the outer SNI, has a certificate that covers it,
-and supports non-ECH connections for this domain, then the server proceeds
-with a standard TLS handshake based on the indicated SNI. Otherwise, the
-server  MAY send an ECH retry hint in the `ServerHello`, accompanied by:
+After trial decryption, ff the server recognizes the outer SNI, has a
+certificate that covers it, and supports non-ECH connections for this
+domain, then the server proceeds with a standard TLS handshake based
+on the indicated SNI. Otherwise, the server MAY send an ECH retry hint
+in the `ServerHello`, accompanied by:
 
 1. A newly issued or updated ECHConfig, possibly including the implicit
    flag again.  
-3. A server certificate that covers the server_name in the supported
-   ECHConfig, ensuring the client can verify it.  
+3. A server certificate that is valid for the public_name in one of the
+   supported ECH configuration, ensuring the client can verify it.  
 
 If multiple ECH keys are in rotation, perform uniform trial decryption
 to avoid timing signals that reveal actual vs. unknown config_id usage. The 
@@ -185,11 +201,9 @@ trigger for the server’s ECH logic.
 
 # Deployment Considerations
 
-Operators who choose this implicit mode remove reliance on stable hashed IDs or
-a known public name as the outer SNI, improving censorship resistance. However,
-implicit config_id usage may require additional CPU overhead from trial
-decryption for GREASE ECH handshakes. A single-key environment simplifies ignoring
-config_id and yields more uniform performance.
+Implicit config_id usage may require additional CPU overhead from trial
+decryption for GREASE ECH handshakes. A single-key environment simplifies
+ignoring the config_id and yields more uniform performance.
 
 Supporting implicit ECH configurations limits the number of different ECH
 keys supported by a server on the same IP address since the outer SNI and
@@ -199,21 +213,23 @@ config_id can no longer be used to choose the appropriate ECH configuration.
 
 ## Timing Side-Channels from Unknown IDs
 
-In normal ECH, the server might quickly reject unknown hashed IDs. Implicit ECH
+In standard ECH, the server might quickly reject unknown hashed IDs. Implicit ECH
 requires the server to attempt uniform decryption for IDs, reducing
 the ECH vs. ECH GREASE timing gap.
 
 ## Hiding the Known public_name
 
-By not placing `public_name` in the actual outer SNI, censors or middleboxes
+By not placing `public_name` in the actual outer SNI, on-path adversaries
 cannot block a known name. The client uses `public_name` only to authenticate
-ECH retry hints, so an active attacker cannot degrade ECH without a valid cert.
+ECH retry hints, so an active attacker cannot degrade ECH without a valid
+certificate.
 
 ## CPU Overhead
 
-Ephemeral config_id usage can lead to increased CPU usage from trial decryption.
-This cost grows if more than one ECH keys are in use on the same server. Operators
-should consider minimizing the number of active keys to mitigate this cost.
+Randomized config_id and outer SNI usage can lead to increased CPU usage
+from trial decryption. This cost grows if more than one ECH keys are
+in use on the same server. Operators should consider minimizing the number
+of active keys to mitigate this cost.
 
 # IANA Considerations
 
