@@ -28,6 +28,7 @@ author:
 normative:
   RFC2119:
   RFC8446:
+  I-D.draft-ietf-tls-esni-23:
 
 informative:
 
@@ -35,7 +36,7 @@ informative:
 --- abstract
 
 This document updates the TLS Encrypted ClientHello (ECH) specification
-[ECH-DRAFT] to support an implicit mode in ECH signaled by a new
+{{!ECH-DRAFT=I-D.draft-ietf-tls-esni-23}} to support an implicit mode in ECH signaled by a new
 `implicit_ech` extension in `ECHConfigContents`. Clients that detect this
 extension override certain base ECH rules:
 
@@ -57,7 +58,7 @@ ephemeral `config_id` values.
 
 # Introduction
 
-The Encrypted ClientHello (ECH) protocol [ECH-DRAFT] is designed to hide
+The Encrypted ClientHello (ECH) protocol {{ECH-DRAFT}} is designed to hide
 sensitive TLS handshake parameters, including the real SNI, from passive
 observers. In the base ECH model, the client sets its outer SNI to
 the public_name from the ECHConfig and derives config_id by hashing the
@@ -108,13 +109,13 @@ public_name coverage rather than SNI matching.
 ## Overridden Rules in the Base ECH Specification
 
 When the implicit_ech extension is found in ECHConfigContents.extensions, the
-following rules in [ECH-DRAFT] are overridden:
+following rules in {{DRAFT-ECH}} are overridden:
 
-• Deterministic config_id derivation (section 4.1 of [ECH-DRAFT]). Instead of
+• Deterministic config_id derivation (section 4.1 of {{DRAFT-ECH}}). Instead of
   hashing the HPKE public key, the client MAY generate config_id as random
   or arbitrary bytes.
 
-• Outer SNI usage (sections where [ECH-DRAFT] says the client SHOULD set SNI
+• Outer SNI usage (sections where {{DRAFT-ECH}} says the client SHOULD set SNI
   to public_name). In implicit mode, the client MAY choose any valid domain
   name or random string for the outer SNI.
 
