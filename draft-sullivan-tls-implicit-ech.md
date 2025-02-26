@@ -44,20 +44,22 @@ Clients that detect this extension override certain base ECH rules:
 - They MAY choose any value for the `config_id` without an
   application profile or being externally configured.
 - They MAY use another value than ECHConfig.contents.public_name
-  in the "server_name" extension (rather than they SHOULD)
+  in the "server_name" extension (rather than they SHOULD use it)
 
-Servers that include `implicit_ech` in the ECHConfig MUST accommodate
+Client-facing servers that include `implicit_ech` in the ECHConfig MUST accommodate
 flexible `config_id` usage as defined in Section 10.4. of {{ECH-DRAFT}}.
 This approach enables the removal of stable identifiers (fixed config ID and
 known public_name) that on-path adversaries can use to fingerprint a
-connection. This improves upon the "Do Not Stick Out" design goal
+connection.
+
+This improves upon the "Do Not Stick Out" design goal
 from Section 10.10.4 of {{ECH-DRAFT}} by allowing clients to choose
 unpredictable identifiers on the wire in the scenario where the set of
 ECH configurations the client encounters is small and therefore
 popular `public_name` or `config_id` values "stick out".
 
 Note that this increases CPU usage in multi-key deployments because
-servers must perform uniform trial decryption to handle arbitrary
+client-facing servers must perform uniform trial decryption to handle arbitrary
 `config_id` values.
 
 
@@ -68,24 +70,23 @@ servers must perform uniform trial decryption to handle arbitrary
 The Encrypted ClientHello (ECH) protocol {{ECH-DRAFT}} is designed to hide
 sensitive TLS handshake parameters, including the real SNI, from passive
 observers. In the base ECH model, the client sets its outer SNI to
-the public_name from the ECHConfig and derives config_id by hashing the
-server’s HPKE public key. Both of these can become stable fingerprints that
-on-path adversaries recognize.
+the public_name and config_id from the ECHConfig. Both of these can
+become stable fingerprints that on-path adversaries recognize.
 
 In implicit mode, the client MAY:
 
 1. Select any outer SNI (rather than the public_name).
 2. Select any config_id instead of taking it from the ECH configuration
-   without an application profile.
+   (without an application profile or extenal configuration agreement).
 
-Servers that publish or accept implicit ECH configurations must adjust key
-selection (e.g., single-key usage, uniform trial decryption), removing reliance
-on stable config IDs or well-known `public_name` values. This design helps
-conceal ECH usage from on-path adversaries, though deployments may see
-increased CPU usage.
+Client-facing servers that publish or accept implicit ECH configurations
+must adjust key selection (e.g., single-key usage,
+uniform trial decryption), removing reliance on stable config IDs or
+well-known `public_name` values. This design helps conceal ECH usage
+from on-path adversaries, though deployments may see increased CPU usage.
 
 This proposal also addresses a timing side-channel in GREASE vs. real ECH, 
-by requiring servers supporting implicit ECH always to perform trial
+by requiring client-facing servers supporting implicit ECH always to perform trial
 decryption as defined in Section 10.4. of {{ECH-DRAFT}} — ensuring consistent
 behavior regardless of ECH key validity.
 
@@ -98,8 +99,8 @@ behavior regardless of ECH key validity.
 ## Extension Definition and Semantics
 
 A new ECHConfig extension type is defined to indicate implicit mode. If this
-extension is present in ECHConfigContents.extensions, clients and servers
-follow the rules described here, overriding certain parts of the base ECH
+extension is present in ECHConfigContents.extensions, clients and client-facing
+servers follow the rules described here, overriding certain parts of the base ECH
 specification.
 
 The extension has the following format:
@@ -111,9 +112,8 @@ The extension has the following format:
 ~~~~
 
 The extension_data is zero-length. The presence of this extension in the
-ECHConfig signals that the config_id used by the client may be ephemeral,
-outer SNI need not match public_name, and retry hint verification uses
-public_name coverage rather than SNI matching.
+ECHConfig signals to the client that the client-facing server is configured
+for implicit ECH and follows the requirements of this document.
 
 ## Overridden Rules in the Base ECH Specification
 
@@ -128,13 +128,10 @@ following rules in {{ECH-DRAFT}} are overridden:
   value of the "server_name" extension to ECHConfig.contents.public_name. In
   implicit mode, the client MAY choose any valid domain name for the outer SNI.
 
-* They MAY use another value than ECHConfig.contents.public_name
-  in the "server_name" extension.
-
 Note that the validation rules in Section 6.1.7 of {{ECH-DRAFT}} still apply
 and the client is still expected to validate that the certificate
 is valid for ECHConfig.contents.public_name (not the "server_name" chosen by
-the client) when the server rejects ECH.
+the client) when the client-facing server rejects ECH.
 
 
 # Client Behavior
@@ -147,14 +144,13 @@ If the client sees the implicit_ech extension in an ECHConfig:
 * It MAY produce a random or arbitrary config_id, rather than
   using ECHConfigContents.key_config.config_id
 
-* If the server issues an ECH retry hint (for example, in EncryptedExtensions),
-  the client MUST confirm that the server certificate covers the original
-  public_name from the ECHConfig. If coverage is lacking, the client discards
-  the hint.
-
 Other aspects of the base ECH spec remain unchanged. In particular, the client
 still picks a cipher suite from key_config.cipher_suites, produces a valid HPKE
-ephemeral key, and encrypts ClientHelloInner into the payload field.
+ephemeral key, and encrypts ClientHelloInner into the payload field. If the
+client-facing server issues an ECH retry hint (for example, in
+EncryptedExtensions), the client MUST still confirm that the server certificate
+is valid for the public_name from the ECHConfig used to establish the connection.
+
 
 # Client-Facing Server Behavior
 
@@ -171,7 +167,7 @@ the inner ClientHello and the appropriate certificate chain for the actual
 
 1. The client was connecting to a domain that does not support ECH
 2. The client used a different ECHConfig than those currently supported on
-   the client-facing server server.
+   the client-facing server.
 
 After trial decryption, ff the server recognizes the outer SNI, has a
 certificate that covers it, and supports non-ECH connections for this
