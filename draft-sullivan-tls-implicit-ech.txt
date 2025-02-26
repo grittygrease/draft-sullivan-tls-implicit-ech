@@ -215,7 +215,7 @@ Table of Contents
    2.  The client used a different ECHConfig than those currently
        supported on the client-facing server.
 
-   After trial decryption, ff the server recognizes the outer SNI, has a
+   After trial decryption, if the server recognizes the outer SNI, has a
    certificate that covers it, and supports non-ECH connections for this
    domain, then the server proceeds with a standard TLS handshake based
    on the indicated SNI.  Otherwise, the server MAY send an ECH retry
@@ -225,7 +225,7 @@ Table of Contents
        implicit flag again.
 
    2.  A server certificate that is valid for the public_name in one of
-       the supported ECH configuration, ensuring the client can verify
+       the supported ECH configurations, ensuring the client can verify
        it.
 
    If multiple ECH keys are in rotation, perform uniform trial

@@ -1365,7 +1365,7 @@ ephemeral key, and encrypts ClientHelloInner into the payload field.<a href="#se
 EncryptedExtensions), the client <span class="bcp14">MUST</span> still confirm that the server certificate
 is valid for the public_name from the ECHConfig used to establish the connection.
 Note that this may be a different name than the one sent in the outer SNI.<a href="#section-4-4" class="pilcrow">¶</a></p>
-<p id="section-4-5">As described in Section 6.1.1 of <span>[<a href="#ECH-DRAFT" class="cite xref">ECH-DRAFT</a>]</span>, in the event of HRR, the config_id 
+<p id="section-4-5">As described in Section 6.1.1 of <span>[<a href="#ECH-DRAFT" class="cite xref">ECH-DRAFT</a>]</span>, in the event of HRR, the config_id
 <span class="bcp14">MUST</span> be left unchanged for the second ClientHelloOuter.<a href="#section-4-5" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1392,7 +1392,7 @@ the inner ClientHello and the appropriate certificate chain for the actual
 the client-facing server.<a href="#section-5-3.2.1" class="pilcrow">¶</a></p>
 </li>
       </ol>
-<p id="section-5-4">After trial decryption, ff the server recognizes the outer SNI, has a
+<p id="section-5-4">After trial decryption, if the server recognizes the outer SNI, has a
 certificate that covers it, and supports non-ECH connections for this
 domain, then the server proceeds with a standard TLS handshake based
 on the indicated SNI. Otherwise, the server <span class="bcp14">MAY</span> send an ECH retry hint
@@ -1404,11 +1404,11 @@ flag again.<a href="#section-5-5.1.1" class="pilcrow">¶</a></p>
 </li>
         <li id="section-5-5.2">
           <p id="section-5-5.2.1">A server certificate that is valid for the public_name in one of the
-supported ECH configuration, ensuring the client can verify it.<a href="#section-5-5.2.1" class="pilcrow">¶</a></p>
+supported ECH configurations, ensuring the client can verify it.<a href="#section-5-5.2.1" class="pilcrow">¶</a></p>
 </li>
       </ol>
 <p id="section-5-6">If multiple ECH keys are in rotation, perform uniform trial decryption
-to avoid timing signals that reveal actual vs. unknown config_id usage. The 
+to avoid timing signals that reveal actual vs. unknown config_id usage. The
 server <span class="bcp14">SHOULD</span> attempt ECH decryption first to avoid revealing whether
 the <code>config_id</code> was recognized.<a href="#section-5-6" class="pilcrow">¶</a></p>
 <p id="section-5-7">In this model, trial decryption on every connection ensures that GREASE
