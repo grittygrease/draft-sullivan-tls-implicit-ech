@@ -11,8 +11,8 @@ number:
 date:
 consensus: true
 v: 3
-area: Security
-workgroup: tls
+area: ""
+workgroup: "Transport Layer Security"
 keyword: Internet-Draft
 
 stand_alone: yes
