@@ -85,7 +85,7 @@ uniform trial decryption), removing reliance on stable config IDs or
 well-known `public_name` values. This design helps conceal ECH usage
 from on-path adversaries, though deployments may see increased CPU usage.
 
-This proposal also addresses a timing side-channel in GREASE vs. real ECH, 
+This proposal also addresses a timing side-channel in GREASE vs. real ECH,
 by requiring client-facing servers supporting implicit ECH always to perform trial
 decryption as defined in Section 10.4. of {{ECH-DRAFT}} — ensuring consistent
 behavior regardless of ECH key validity.
@@ -182,7 +182,7 @@ in the `ServerHello`, accompanied by:
 1. A newly issued or updated ECHConfig, possibly including the implicit
    flag again.
 2. A server certificate that is valid for the public_name in one of the
-   supported ECH configurations, ensuring the client can verify it.  
+   supported ECH configurations, ensuring the client can verify it.
 
 If multiple ECH keys are in rotation, perform uniform trial decryption
 to avoid timing signals that reveal actual vs. unknown config_id usage. The
