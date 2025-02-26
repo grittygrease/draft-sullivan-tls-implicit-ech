@@ -151,6 +151,8 @@ client-facing server issues an ECH retry hint (for example, in
 EncryptedExtensions), the client MUST still confirm that the server certificate
 is valid for the public_name from the ECHConfig used to establish the connection.
 
+As described in Section 6.1.1 of {{ECH-DRAFT}} in the event of HRR, the config_id 
+MUST be left unchanged for the second ClientHelloOuter.
 
 # Client-Facing Server Behavior
 
