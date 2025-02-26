@@ -5,7 +5,7 @@ category: std
 updates: draft-ietf-tls-esni-23
 
 
-docname: draft-sullivan-tls-implicit-ech-00
+docname: draft-sullivan-tls-implicit-ech-latest
 submissiontype: IETF
 number:
 date:
