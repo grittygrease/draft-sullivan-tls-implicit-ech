@@ -1,0 +1,293 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2025-02-27T00:12:10.834449+00:00",
+  "repo": "grittygrease/draft-sullivan-tls-implicit-ech",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [],
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDON--yp86MYyYV",
+      "title": "Update and rename draft-todo-yourname-protocol.md to draft-sullivan-t\u2026",
+      "url": "https://github.com/grittygrease/draft-sullivan-tls-implicit-ech/pull/1",
+      "state": "MERGED",
+      "author": "grittygrease",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "\u2026ls-implicit-ech.md\r\n\r\nInitial text and scaffolding.",
+      "createdAt": "2025-02-25T03:43:09Z",
+      "updatedAt": "2025-02-25T03:43:41Z",
+      "baseRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
+      "baseRefName": "main",
+      "baseRefOid": "5e03abcff8e192225d084cc2cb6dc92f6988cb71",
+      "headRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
+      "headRefName": "grittygrease-patch-1",
+      "headRefOid": "964faa2adf709599865cdf4f46242b3adf1e2e4e",
+      "closedAt": "2025-02-25T03:43:41Z",
+      "mergedAt": "2025-02-25T03:43:41Z",
+      "mergedBy": "grittygrease",
+      "mergeCommit": {
+        "oid": "53ca210a5b334b40fb528e2995ac97163e70f09c"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 2,
+      "id": "PR_kwDON--yp86MjaHX",
+      "title": "Update draft-sullivan-tls-implicit-ech.md",
+      "url": "https://github.com/grittygrease/draft-sullivan-tls-implicit-ech/pull/2",
+      "state": "MERGED",
+      "author": "grittygrease",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Fix up references to ECH draft",
+      "createdAt": "2025-02-26T02:04:39Z",
+      "updatedAt": "2025-02-26T02:07:47Z",
+      "baseRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
+      "baseRefName": "main",
+      "baseRefOid": "53ca210a5b334b40fb528e2995ac97163e70f09c",
+      "headRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
+      "headRefName": "grittygrease-patch-2",
+      "headRefOid": "17c434f5ca57b02f319229a0ea83ca198350467f",
+      "closedAt": "2025-02-26T02:07:47Z",
+      "mergedAt": "2025-02-26T02:07:47Z",
+      "mergedBy": "grittygrease",
+      "mergeCommit": {
+        "oid": "22f895590fb4b7c82051745aaf981e92401b31bc"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 3,
+      "id": "PR_kwDON--yp86Mj0es",
+      "title": "Update draft-sullivan-tls-implicit-ech.md",
+      "url": "https://github.com/grittygrease/draft-sullivan-tls-implicit-ech/pull/3",
+      "state": "MERGED",
+      "author": "grittygrease",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Minor textual cleanup and wording changes.",
+      "createdAt": "2025-02-26T03:29:48Z",
+      "updatedAt": "2025-02-26T03:36:12Z",
+      "baseRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
+      "baseRefName": "main",
+      "baseRefOid": "22f895590fb4b7c82051745aaf981e92401b31bc",
+      "headRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
+      "headRefName": "grittygrease-patch-3",
+      "headRefOid": "6f9b45aff56e77763257986ed3daad55dd74770b",
+      "closedAt": "2025-02-26T03:36:12Z",
+      "mergedAt": "2025-02-26T03:36:12Z",
+      "mergedBy": "grittygrease",
+      "mergeCommit": {
+        "oid": "54febb405b76f0b07ca0b23d86c24c59ee2e58ec"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 4,
+      "id": "PR_kwDON--yp86Mj9lI",
+      "title": "Update draft-sullivan-tls-implicit-ech.md",
+      "url": "https://github.com/grittygrease/draft-sullivan-tls-implicit-ech/pull/4",
+      "state": "MERGED",
+      "author": "grittygrease",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "More minor edits.",
+      "createdAt": "2025-02-26T03:52:28Z",
+      "updatedAt": "2025-02-26T03:53:23Z",
+      "baseRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
+      "baseRefName": "main",
+      "baseRefOid": "54febb405b76f0b07ca0b23d86c24c59ee2e58ec",
+      "headRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
+      "headRefName": "grittygrease-patch-4",
+      "headRefOid": "8523fd91c8310287ea73c03ce58dd515f8b45799",
+      "closedAt": "2025-02-26T03:53:23Z",
+      "mergedAt": "2025-02-26T03:53:23Z",
+      "mergedBy": "grittygrease",
+      "mergeCommit": {
+        "oid": "3e7eeea73583eac40ad5449d3d174b87c4c52d57"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 5,
+      "id": "PR_kwDON--yp86MkSZa",
+      "title": "Update draft-sullivan-tls-implicit-ech.md",
+      "url": "https://github.com/grittygrease/draft-sullivan-tls-implicit-ech/pull/5",
+      "state": "MERGED",
+      "author": "grittygrease",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Clarification ",
+      "createdAt": "2025-02-26T04:42:30Z",
+      "updatedAt": "2025-02-26T04:49:04Z",
+      "baseRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
+      "baseRefName": "main",
+      "baseRefOid": "3e7eeea73583eac40ad5449d3d174b87c4c52d57",
+      "headRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
+      "headRefName": "grittygrease-patch-5",
+      "headRefOid": "20694830c744cb4f19809421af1b2c96e2e6ed01",
+      "closedAt": "2025-02-26T04:49:04Z",
+      "mergedAt": "2025-02-26T04:49:04Z",
+      "mergedBy": "grittygrease",
+      "mergeCommit": {
+        "oid": "8552d04975eb11ed7ad48e510ec7c4f6935390b8"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDON--yp86didyg",
+          "commit": {
+            "abbreviatedOid": "2069483"
+          },
+          "author": "cjpatton",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-26T04:43:17Z",
+          "updatedAt": "2025-02-26T04:43:17Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "id": "PR_kwDON--yp86MkUb9",
+      "title": "Update draft-sullivan-tls-implicit-ech.md",
+      "url": "https://github.com/grittygrease/draft-sullivan-tls-implicit-ech/pull/6",
+      "state": "MERGED",
+      "author": "grittygrease",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-02-26T04:48:48Z",
+      "updatedAt": "2025-02-26T05:19:44Z",
+      "baseRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
+      "baseRefName": "main",
+      "baseRefOid": "8552d04975eb11ed7ad48e510ec7c4f6935390b8",
+      "headRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
+      "headRefName": "grittygrease-patch-6",
+      "headRefOid": "e84880acb09bd37ad4b1bac9c6b5d562482e5a62",
+      "closedAt": "2025-02-26T05:19:44Z",
+      "mergedAt": "2025-02-26T05:19:44Z",
+      "mergedBy": "grittygrease",
+      "mergeCommit": {
+        "oid": "2d7554e84a51bd515c2a1ee8d0a3150b5c8ccf62"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 7,
+      "id": "PR_kwDON--yp86MlBJ2",
+      "title": "Update draft-sullivan-tls-implicit-ech.md",
+      "url": "https://github.com/grittygrease/draft-sullivan-tls-implicit-ech/pull/7",
+      "state": "MERGED",
+      "author": "grittygrease",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "compile",
+      "createdAt": "2025-02-26T06:41:30Z",
+      "updatedAt": "2025-02-26T06:41:38Z",
+      "baseRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
+      "baseRefName": "main",
+      "baseRefOid": "2d7554e84a51bd515c2a1ee8d0a3150b5c8ccf62",
+      "headRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
+      "headRefName": "grittygrease-patch-7",
+      "headRefOid": "14251083d00c45f51add482f7fd9aa7c71746699",
+      "closedAt": "2025-02-26T06:41:38Z",
+      "mergedAt": "2025-02-26T06:41:38Z",
+      "mergedBy": "grittygrease",
+      "mergeCommit": {
+        "oid": "7626849f71db9fe2eac5a092ce72d22506b4b945"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 8,
+      "id": "PR_kwDON--yp86MlCz7",
+      "title": "Update draft-sullivan-tls-implicit-ech.md",
+      "url": "https://github.com/grittygrease/draft-sullivan-tls-implicit-ech/pull/8",
+      "state": "MERGED",
+      "author": "grittygrease",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "whitespace",
+      "createdAt": "2025-02-26T06:44:38Z",
+      "updatedAt": "2025-02-26T06:45:12Z",
+      "baseRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
+      "baseRefName": "main",
+      "baseRefOid": "7626849f71db9fe2eac5a092ce72d22506b4b945",
+      "headRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
+      "headRefName": "grittygrease-patch-8",
+      "headRefOid": "f0df5227a6a95f3f9b97255151ce63ba0e95a9d8",
+      "closedAt": "2025-02-26T06:45:11Z",
+      "mergedAt": "2025-02-26T06:45:11Z",
+      "mergedBy": "grittygrease",
+      "mergeCommit": {
+        "oid": "5930c65ecc13f0807f9f13023cfde9bf0fb67755"
+      },
+      "comments": [],
+      "reviews": []
+    }
+  ]
+}
