@@ -90,13 +90,22 @@ by requiring client-facing servers supporting implicit ECH always to perform tri
 decryption as defined in Section 10.4. of {{ECH-DRAFT}} — ensuring consistent
 behavior regardless of ECH key validity.
 
+This extension requires no changes to TLS servers, but does require operators to change
+the format of their ECHConfigs advertised in DNS and in their retry configs. This is to
+ensure that clients can successfully authenticate any retry configs provided via TLS.
+
 # Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
 
-# Implicit ECH Extension
+# Implicit ECH Extensions
 
-## Extension Definition and Semantics
+This draft specifies two ECHConfig extensions. The first defines configuration information
+and is used to advertise that a server supports Implicit ECH. The second authenticates
+retry configs and is used when a server provides fresh retry_configs in its
+Encrypted Extensions message.
+
+## Implicit ECH Configuration Extension
 
 A new ECHConfig extension type is defined to indicate implicit mode. If this
 extension is present in ECHConfigContents.extensions, clients and client-facing
@@ -106,14 +115,56 @@ specification.
 The extension has the following format:
 
 ~~~~
-    enum { implicit_ech(TBD), (65535) } ECHConfigExtensionType;
+    enum { implicit_ech_config (TBD), (65535) } ECHConfigExtensionType;
 
-    struct { // No data; presence indicates "implicit" usage } ImplicitECHConfig;
+    struct {
+      HashAlgorithms hash_algorithm_id; // Needs a new IANA registry
+      SignatureScheme signature_algorithm_id; // As in TLS defined in RFC 8446 4.2.3
+      opaque retry_signing_key_hash<1..2^16-1>;
+    } RetryKey;
+
+    struct {
+      RetryKey retry_keys<1..255>
+    } ImplicitECHConfig;
 ~~~~
 
-The extension_data is zero-length. The presence of this extension in the
+The presence of this extension in the
 ECHConfig signals to the client that the client-facing server is configured
 for implicit ECH and follows the requirements of this document.
+
+The extension conveys a list of public key hashes which correspond to public keys which can
+be used to authenticate ECH retry configs.
+
+## Implicit ECH Authenticator Extension
+
+A new ECHConfig extension type is defined to authenticate implicit mode retry configs.
+
+~~~~
+    enum { implicit_ech_auth (TBD), (65535) } ECHConfigExtensionType;
+
+    struct {
+      uint32 not_after_timestamp; // Linux Epoch timestamp
+      SignatureScheme signature_algorithm_id; // As in TLS defined in RFC 8446 4.2.3
+      HashAlgorithms hash_algorithm_id; // Needs a new IANA registry
+      opaque public_key<1..2^16-1>; // Parsed via signature_algorithm_id
+      opaque signature<1..2^16-1>; // Parsed via signature_algorithm_id
+    } ImplicitECHAuthenticator;
+~~~~
+
+Clients use the signature conveyed in this extension to authenticate the provided retry configs in the EncryptedExtension message.
+
+The signature is computed over the message:
+
+~~~~
+  "ECH_implicit_retry_config_authenticator" || ech_config_payload
+~~~~
+
+The `ech_config_payload` consists of the ECHConfig itself, including all fields except the Signature part of the ImplicitECHAuthenticator. The ImplicitECHAuthenticator should always appear as the last extension (similar to the PSK extension in TLS).
+
+TODO: There's a choice between having the ImplicitECHAuthenticator be an ECHConfig extension, conveyed inside retry_configs or
+its own TLS extension. The latter is a bit cleaner, but violates the request-response pattern of TLS extensions unless we also
+bump to a new ECH version. This also complicates how the server tells the client that ECH should be disabled. Putting the authenticator
+inside the config means that we also need to define a variant of the config with an empty body to indicate "ECH should be disabled."
 
 ## Overridden Rules in the Base ECH Specification
 
@@ -127,12 +178,6 @@ following rules in {{ECH-DRAFT}} are overridden:
 - Outer SNI usage (Section 6.1 of {{ECH-DRAFT}} says the client SHOULD set the
   value of the "server_name" extension to ECHConfig.contents.public_name. In
   implicit mode, the client MAY choose any valid domain name for the outer SNI.
-
-Note that the validation rules in Section 6.1.7 of {{ECH-DRAFT}} still apply
-and the client is still expected to validate that the certificate
-is valid for ECHConfig.contents.public_name (not the "server_name" chosen by
-the client) when the client-facing server rejects ECH.
-
 
 # Client Behavior
 
@@ -148,10 +193,35 @@ Other aspects of the base ECH spec remain unchanged. In particular, the client
 still picks a cipher suite from key_config.cipher_suites, produces a valid HPKE
 ephemeral key, and encrypts ClientHelloInner into the payload field.
 
-If the client-facing server issues an ECH retry hint (for example, in
-EncryptedExtensions), the client MUST still confirm that the server certificate
-is valid for the public_name from the ECHConfig used to establish the connection.
-Note that this may be a different name than the one sent in the outer SNI.
+If ECH is accepted, then the same procedure as-in draft-ietf-tls-esni is followed.
+However, is ECH is rejected and the Implict ECH was advertised, the client must follow
+a different strategy detailed in the next section.
+
+## Behavior when ECH fails
+
+Firstly, the client looks at the server's EncryptedExtensions message and checks for the presence
+of an ECH extension with retry_configs. If present, the client extracts any provided ECHConfigs
+which have the ImplicitECHAuthenticator extension and ignores any without it.
+
+If the extension is present, the client must hash the provided PublicKey using indicated hash algorithm and check that it appears in the HashedPublicKey list provided in the initialImplicitECH extension. If so,
+it must then validate the provided signature against that public key.
+
+If the signature verifies, the client treats the retry_configs as authentic and uses them to retry
+as specified in draft-ietf-tls-esni Section 6.1.6 without considering the server's TLS certificate.
+If the hashed public key does not appear in the provided list, or the signature does not verify,
+the client must behave as though the server's TLS certificate could not be validated.
+
+Note that regardless of whether the ImplicitECHAuthenticator is successfully validated, the client will terminate the
+connection and retry with a fresh one. The only difference is whether the client treats the provided retry_configs as authentic.
+
+If there are no retry_configs with valid ImplicitECHAuthenticators presented in the EncryptedExtensions message, then the client
+considers the presented TLS certificate. The client verifies the presented TLS certificate against the name it selected for
+the Client Hello Outer SNI. If the certificate validates for the Client Hello Outer and the issuing CA was loaded via Enterprise
+policy, then the client can safely conclude it is behind a middlebox trusted by its administrator and retry without ECH. Otherwise,
+if the certificate is not valid for the intended name or if the issuing CA was not loaded via Enterprise policy, the client
+behaves as though the response could not be validated.
+
+TODO: Better way to describe 'Enterprise Policy'? It's intended to encompass all non-WebPKI roots.
 
 As described in Section 6.1.1 of {{ECH-DRAFT}}, in the event of HRR, the config_id
 MUST be left unchanged for the second ClientHelloOuter.
@@ -173,16 +243,23 @@ the inner ClientHello and the appropriate certificate chain for the actual
 2. The client used a different ECHConfig than those currently supported on
    the client-facing server.
 
-After trial decryption, if the server recognizes the outer SNI, has a
+If trial decryption fails and the server recognizes the outer SNI, has a
 certificate that covers it, and supports non-ECH connections for this
 domain, then the server proceeds with a standard TLS handshake based
-on the indicated SNI. Otherwise, the server MAY send an ECH retry hint
-in the `ServerHello`, accompanied by:
+on the indicated SNI. Otherwise, the server selects whichever certificate
+it would use as a fallback and proceeds with it.
 
-1. A newly issued or updated ECHConfig, possibly including the implicit
-   flag again.
-2. A server certificate that is valid for the public_name in one of the
-   supported ECH configurations, ensuring the client can verify it.
+As laid out in draft-ietf-tls-esni Section 7.0, the server SHOULD send an ECH retry_config extension
+to provide the client with a fresh config, or leave it absent to indicate that
+the client should disable ECH.
+
+Servers which support Implicit ECH MUST also provide the ImplicitECHAuthenticator
+extension whenever they respond. This extension allows clients using Implicit ECH
+to authenticate the presence (or absence) of the ECH retry_configs. The ImplicitECHAuthenticator
+can be prepared in advance and the TLS server itself does not require any behavioural changes
+to generate or transmit it as it is communicated as part of the ECHConfig.
+
+Servers can use a client's indicated SignatureScheme support to guide which ECH Retry Configs to send.
 
 If multiple ECH keys are in rotation, perform uniform trial decryption
 to avoid timing signals that reveal actual vs. unknown config_id usage. The
@@ -193,12 +270,6 @@ In this model, trial decryption on every connection ensures that GREASE
 and real ECH connections are handled uniformly, preventing timing
 side-channels.
 
-If the client’s ClientHello does not contain an ECH extension, the server
-proceeds with a standard TLS handshake based on the indicated SNI. This
-fallback behavior should remain unchanged from existing TLS handling. The
-presence or absence of ECH extension data in the ClientHello is the primary
-trigger for the server’s ECH logic.
-
 # Deployment Considerations
 
 Implicit config_id usage may require additional CPU overhead from trial
@@ -208,6 +279,19 @@ ignoring the config_id and yields more uniform performance.
 Supporting implicit ECH configurations limits the number of different ECH
 keys supported by a server on the same IP address since the outer SNI and
 config_id can no longer be used to choose the appropriate ECH configuration.
+
+Deployments can support key rotation using the following strategy:
+ * Add a new hashed public key to their ImplicitECHConfig
+ * Wait for the new ECHConfig to propagate (DNS TTL)
+ * Begin signing their retry_configs with the new public key.
+ * Remove the old public key hash from their ImplicitECHConfig.
+
+Deployments can handle key compromise by removing the affected public key
+from their ImplicitECHConfig.
+
+notAfter times SHOULD be at least 24 hours in the future and no more than 48 hours in the future. This allows
+the server to tolerate clients with up to 24 hours clock skew, whilst limiting the ability of the attacker to
+replay retry_configs in the future.
 
 # Security Considerations
 
@@ -231,17 +315,48 @@ from trial decryption. This cost grows if more than one ECH keys are
 in use on the same server. Operators should consider minimizing the number
 of active keys to mitigate this cost.
 
+## Authentication of Retry Configs
+
+draft-ietf-tls-esni specifies how retry_configs are authenticated based on the public_name specified
+in the ECHConfig and the provided TLS certificate. This extension uses a different approach.
+The ECHConfig instead specifies one or more public keys and a signature by one of these keys
+serves to authenticate the retry_configs.
+
+This approach provides equivalent security. An attacker who can control the initial ECHConfig can
+control authentication of the retry_configs in both cases. Authentication of the retry_configs
+is necessary to prevent an attacker from disabling ECH by responding to the client's TLS connection
+with a faked response from the server.
+
+The inclusion of a notAfter timestamp in the retry_configs is necessary to prevent cut and paste
+attacks between handshakes. An attacker that sees a signed retry_config can use it to reply to
+other connection attempts. Consequently, it is necessary to limit the lifetime of these responses to
+ensure that future clients can't be given old ECHConfigs which are no longer supported by the server.
+
+NOTE: An alternative would be to include the client_random in the signature rather than a notAfter date. This
+would avoid all replays attacks, but require more invasive changes to TLS servers and prevents the caching of ECHConfigs.
+
+The need to support Enterprise Policy roots with missing ECH retry_configs extensions is because middleboxes will typically respond
+without any ECH config in their response and hence without an authenticator to validate it.
+
+Note: Alternative would be to just disable use of ECH when an Enterprise CA is configured.
+
 # IANA Considerations
 
-This document requests that IANA add the following entry to the "ECHConfig
+This document requests that IANA add the following entries to the "ECHConfig
 Extension" registry:
 
-- Value: TBD (suggested code point for `implicit_ech`)
-- Extension Name: implicit_ech
+- Value: TBD (suggested code point for `implicit_ech_config`)
+- Extension Name: implicit_ech_config
 - Recommended: Yes
 - Reference: This document
 - Notes: If present, the ECHConfig is "implicit," enabling ephemeral config_id
-  usage and flexible outer SNI.
+  usage and flexible outer SNI, as well as authentication by the listed public key hashes.
+
+- Value: TBD (suggested code point for `implicit_ech_auth`)
+- Extension Name: implicit_ech_auth
+- Recommended: Yes
+- Reference: This document
+- Notes: If present, the ECHConfig is authenticated by this extension.
 
 --- back
 
