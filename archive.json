@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-18T00:12:11.072248+00:00",
+  "timestamp": "2025-03-20T00:12:15.376133+00:00",
   "repo": "grittygrease/draft-sullivan-tls-implicit-ech",
   "labels": [
     {
@@ -286,6 +286,32 @@
       "mergeCommit": {
         "oid": "5930c65ecc13f0807f9f13023cfde9bf0fb67755"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 9,
+      "id": "PR_kwDON--yp86PSrno",
+      "title": "Sketch signature-based retry configs",
+      "url": "https://github.com/grittygrease/draft-sullivan-tls-implicit-ech/pull/9",
+      "state": "OPEN",
+      "author": "dennisjackson",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR sketches a design where the retry_configs are authenticated via a signature rather than via the TLS certificate. \r\n\r\nThis avoids connection failures when the server can't distinguish between GREASE and a client with a stale ECHConfig.",
+      "createdAt": "2025-03-19T14:44:03Z",
+      "updatedAt": "2025-03-19T14:44:03Z",
+      "baseRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
+      "baseRefName": "main",
+      "baseRefOid": "07cbd99d7646a7dd696efa9b925b90c8435b9e9f",
+      "headRepository": "dennisjackson/draft-sullivan-tls-implicit-ech",
+      "headRefName": "simple-signing",
+      "headRefOid": "500d148c3e360b127c5c930f233c3ca36d8dcbba",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
