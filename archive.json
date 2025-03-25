@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-23T00:13:38.815238+00:00",
+  "timestamp": "2025-03-25T00:13:08.947388+00:00",
   "repo": "grittygrease/draft-sullivan-tls-implicit-ech",
   "labels": [
     {
@@ -301,7 +301,7 @@
       "labels": [],
       "body": "This PR sketches a design where the retry_configs are authenticated via a signature rather than via the TLS certificate. \r\n\r\nThis avoids connection failures when the server can't distinguish between GREASE and a client with a stale ECHConfig.",
       "createdAt": "2025-03-19T14:44:03Z",
-      "updatedAt": "2025-03-19T14:44:03Z",
+      "updatedAt": "2025-03-24T01:40:39Z",
       "baseRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
       "baseRefName": "main",
       "baseRefOid": "07cbd99d7646a7dd696efa9b925b90c8435b9e9f",
@@ -313,7 +313,100 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDON--yp86hdkgF",
+          "commit": {
+            "abbreviatedOid": "500d148"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-24T00:23:40Z",
+          "updatedAt": "2025-03-24T01:40:39Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "```suggestion\r\n      opaque retry_signing_key_hash<1..255>;\r\n```",
+              "createdAt": "2025-03-24T00:23:40Z",
+              "updatedAt": "2025-03-24T01:40:39Z"
+            },
+            {
+              "originalPosition": 34,
+              "body": "```suggestion\r\n      SignatureScheme signature_algorithm_id; // Defined in RFC 8446 4.2.3\r\n```",
+              "createdAt": "2025-03-24T00:25:01Z",
+              "updatedAt": "2025-03-24T01:40:39Z"
+            },
+            {
+              "originalPosition": 61,
+              "body": "```suggestion\r\n      SignatureScheme signature_algorithm_id; // Defined in RFC 8446 4.2.3\r\n```",
+              "createdAt": "2025-03-24T00:25:10Z",
+              "updatedAt": "2025-03-24T01:40:39Z"
+            },
+            {
+              "originalPosition": 40,
+              "body": "```suggestion\r\n      RetryKey retry_keys<1..255>;\r\n```",
+              "createdAt": "2025-03-24T00:25:28Z",
+              "updatedAt": "2025-03-24T01:40:39Z"
+            },
+            {
+              "originalPosition": 33,
+              "body": "```suggestion\r\n      HashAlgorithm hash_algorithm_id; // Needs a new IANA registry\r\n```\r\n\r\nThe number of hash algorithm registries that IANA maintains is potentially worth another XKCD 927-style joke.\r\n\r\nThankfully, we have https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-18 which can be revived.",
+              "createdAt": "2025-03-24T00:26:23Z",
+              "updatedAt": "2025-03-24T01:40:39Z"
+            },
+            {
+              "originalPosition": 62,
+              "body": "```suggestion\r\n      HashAlgorithm hash_algorithm_id; // Needs a new IANA registry\r\n```",
+              "createdAt": "2025-03-24T00:26:31Z",
+              "updatedAt": "2025-03-24T01:40:39Z"
+            },
+            {
+              "originalPosition": 81,
+              "body": "Could this be a new message type, like NewSessionTicket, with the ECH extension only signaling that a new config will be provided?",
+              "createdAt": "2025-03-24T00:35:50Z",
+              "updatedAt": "2025-03-24T01:40:39Z"
+            },
+            {
+              "originalPosition": 107,
+              "body": "```suggestion\r\nIf ECH is accepted, then the same procedure as-in {{I-D.ietf-tls-esni}} is followed.\r\n```",
+              "createdAt": "2025-03-24T01:30:22Z",
+              "updatedAt": "2025-03-24T01:40:39Z"
+            },
+            {
+              "originalPosition": 117,
+              "body": "It is not 100% clear that this refers to the extension that the client received via other means (either a DNS SVCB lookup or a previous retry config.  There's a potential for this to be mistaken to refer to the value in the retry config, which would not work.",
+              "createdAt": "2025-03-24T01:33:29Z",
+              "updatedAt": "2025-03-24T01:40:39Z"
+            },
+            {
+              "originalPosition": 121,
+              "body": "```suggestion\r\nas specified in {{I-D.ietf-tls-esni, Section 6.1.6}} without considering the server's TLS certificate.\r\n```",
+              "createdAt": "2025-03-24T01:33:55Z",
+              "updatedAt": "2025-03-24T01:40:39Z"
+            },
+            {
+              "originalPosition": 188,
+              "body": "It looks like the procedures you define won't allow this to be propagated without causing ECH failures.  At least in the transition from public_name to key hashes.\r\n\r\nIt wasn't obvious to me that the text on Enterprise policy was intended to encompass the existing public_name-based retry method.  If that is the case, then this probably needs to be clearer.",
+              "createdAt": "2025-03-24T01:38:04Z",
+              "updatedAt": "2025-03-24T01:40:39Z"
+            },
+            {
+              "originalPosition": 196,
+              "body": "I'd extend this a fair bit longer than 48 hours.  The value of the thing being protected here is far less than what a certificate protects and those last for longer.",
+              "createdAt": "2025-03-24T01:39:33Z",
+              "updatedAt": "2025-03-24T01:40:39Z"
+            },
+            {
+              "originalPosition": 209,
+              "body": "```suggestion\r\n{{I-D.ietf-tls-esni}} specifies how retry_configs are authenticated based on the public_name specified\r\n```",
+              "createdAt": "2025-03-24T01:39:55Z",
+              "updatedAt": "2025-03-24T01:40:39Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
