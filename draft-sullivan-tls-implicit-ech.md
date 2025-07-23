@@ -118,13 +118,13 @@ The extension has the following format:
     enum { implicit_ech_config (TBD), (65535) } ECHConfigExtensionType;
 
     struct {
-      HashAlgorithms hash_algorithm_id; // Needs a new IANA registry
-      SignatureScheme signature_algorithm_id; // As in TLS defined in RFC 8446 4.2.3
-      opaque retry_signing_key_hash<1..2^16-1>;
+      HashAlgorithm hash_algorithm_id; // Needs a new IANA registry
+      SignatureScheme signature_algorithm_id; // Defined in RFC 8446 4.2.3
+      opaque retry_signing_key_hash<1..255>;
     } RetryKey;
 
     struct {
-      RetryKey retry_keys<1..255>
+      RetryKey retry_keys<1..255>;
     } ImplicitECHConfig;
 ~~~~
 
@@ -144,8 +144,8 @@ A new ECHConfig extension type is defined to authenticate implicit mode retry co
 
     struct {
       uint32 not_after_timestamp; // Linux Epoch timestamp
-      SignatureScheme signature_algorithm_id; // As in TLS defined in RFC 8446 4.2.3
-      HashAlgorithms hash_algorithm_id; // Needs a new IANA registry
+      SignatureScheme signature_algorithm_id; // Defined in RFC 8446 4.2.3
+      HashAlgorithm hash_algorithm_id; // Needs a new IANA registry
       opaque public_key<1..2^16-1>; // Parsed via signature_algorithm_id
       opaque signature<1..2^16-1>; // Parsed via signature_algorithm_id
     } ImplicitECHAuthenticator;
@@ -193,7 +193,7 @@ Other aspects of the base ECH spec remain unchanged. In particular, the client
 still picks a cipher suite from key_config.cipher_suites, produces a valid HPKE
 ephemeral key, and encrypts ClientHelloInner into the payload field.
 
-If ECH is accepted, then the same procedure as-in draft-ietf-tls-esni is followed.
+If ECH is accepted, then the same procedure as-in {{I-D.ietf-tls-esni}} is followed.
 However, is ECH is rejected and the Implict ECH was advertised, the client must follow
 a different strategy detailed in the next section.
 
@@ -207,7 +207,7 @@ If the extension is present, the client must hash the provided PublicKey using i
 it must then validate the provided signature against that public key.
 
 If the signature verifies, the client treats the retry_configs as authentic and uses them to retry
-as specified in draft-ietf-tls-esni Section 6.1.6 without considering the server's TLS certificate.
+as specified in {{I-D.ietf-tls-esni, Section 6.1.6}} without considering the server's TLS certificate.
 If the hashed public key does not appear in the provided list, or the signature does not verify,
 the client must behave as though the server's TLS certificate could not be validated.
 
@@ -317,7 +317,7 @@ of active keys to mitigate this cost.
 
 ## Authentication of Retry Configs
 
-draft-ietf-tls-esni specifies how retry_configs are authenticated based on the public_name specified
+{{I-D.ietf-tls-esni}} specifies how retry_configs are authenticated based on the public_name specified
 in the ECHConfig and the provided TLS certificate. This extension uses a different approach.
 The ECHConfig instead specifies one or more public keys and a signature by one of these keys
 serves to authenticate the retry_configs.
