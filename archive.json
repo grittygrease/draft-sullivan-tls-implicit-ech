@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-22T00:15:10.098649+00:00",
+  "timestamp": "2025-07-24T00:14:48.850936+00:00",
   "repo": "grittygrease/draft-sullivan-tls-implicit-ech",
   "labels": [
     {
@@ -301,13 +301,13 @@
       "labels": [],
       "body": "This PR sketches a design where the retry_configs are authenticated via a signature rather than via the TLS certificate. \r\n\r\nThis avoids connection failures when the server can't distinguish between GREASE and a client with a stale ECHConfig.",
       "createdAt": "2025-03-19T14:44:03Z",
-      "updatedAt": "2025-03-24T01:40:39Z",
+      "updatedAt": "2025-07-23T09:47:40Z",
       "baseRepository": "grittygrease/draft-sullivan-tls-implicit-ech",
       "baseRefName": "main",
       "baseRefOid": "07cbd99d7646a7dd696efa9b925b90c8435b9e9f",
       "headRepository": "dennisjackson/draft-sullivan-tls-implicit-ech",
       "headRefName": "simple-signing",
-      "headRefOid": "500d148c3e360b127c5c930f233c3ca36d8dcbba",
+      "headRefOid": "bbfa9711f3c62cbafbe7ff876a442435ab143017",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -403,6 +403,26 @@
               "body": "```suggestion\r\n{{I-D.ietf-tls-esni}} specifies how retry_configs are authenticated based on the public_name specified\r\n```",
               "createdAt": "2025-03-24T01:39:55Z",
               "updatedAt": "2025-03-24T01:40:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDON--yp861ls4-",
+          "commit": {
+            "abbreviatedOid": "500d148"
+          },
+          "author": "dennisjackson",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-23T09:47:40Z",
+          "updatedAt": "2025-07-23T09:47:40Z",
+          "comments": [
+            {
+              "originalPosition": 188,
+              "body": "It's not explicit in the draft, but I think servers can support traditional ECH and implicit ECH simultaneously. Clients that don't know about Implicit will ignore the extension (and work fine). ",
+              "createdAt": "2025-07-23T09:47:40Z",
+              "updatedAt": "2025-07-23T09:47:40Z"
             }
           ]
         }
